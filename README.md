@@ -1,17 +1,17 @@
-##task management app
+# task management app
 
 # Allow user to add and assign tasks to user along with deadline and task details.
 
-#Installation
+# Installation
 - clone repository
 - run "npm install"
 - run "npm run dev"
 - follow localhost link.
 
-#Important details
+# Important details
 this project might not work as expected due to removal of important api keys.
 
-#create By
+# create By
 Gurpreet Singh 
 
 
