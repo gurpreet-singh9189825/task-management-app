@@ -1,5 +1,7 @@
 # task management app
 
+# live Demo https://project-management-react-a7ee1.web.app/
+
 # Allow user to add and assign tasks to user along with deadline and task details.
 
 # Installation
@@ -12,7 +14,7 @@
 this project might not work as expected due to removal of important api keys.
 
 # create By
-Gurpreet Singh 
+Gurpreet Singh  https://github.com/gurpreet-singh9189825
 
 
 
