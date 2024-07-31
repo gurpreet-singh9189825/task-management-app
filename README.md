@@ -1,3 +1,33 @@
+#task management app
+
+# Allow user to add and assign tasks to user along with deadline and task details.
+
+#Installation
+- clone repository
+- run "npm install"
+- run "npm run dev"
+- follow localhost link.
+
+#Important details
+this project might not work as expected due to removal of important api keys.
+
+#create By
+Gurpreet Singh 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
