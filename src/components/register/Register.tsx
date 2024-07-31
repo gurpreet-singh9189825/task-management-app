@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import Input from "../input/Input";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../auth/firebase.js";
 import { ToastContainer, toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import ClipLoader from "react-spinners/ClipLoader";
 
 interface LoginFormInputs {
   email: string;
@@ -12,6 +14,7 @@ interface LoginFormInputs {
 }
 
 const Register = () => {
+  const [spinner, setSpinner] = useState(false);
   const {
     control,
     handleSubmit,
@@ -22,8 +25,10 @@ const Register = () => {
       password: "",
     },
   });
+  const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+    setSpinner(true);
     try {
       const userCredentials = await createUserWithEmailAndPassword(
         auth,
@@ -32,11 +37,17 @@ const Register = () => {
       );
       const user = userCredentials.user;
       if (user) {
+        setSpinner(false);
         toast.success("Registration Successful", {
           position: "top-right",
         });
+        navigate("/task");
       }
     } catch (error: any) {
+      toast.info(error.message, {
+        position: "top-right",
+      });
+      setSpinner(false);
       const errorCode = error.code;
       const errorMessage = error.message;
     }
@@ -107,6 +118,13 @@ const Register = () => {
 
               <button className="bg-sky-500 mt-6 p-1" type="submit">
                 Register
+                <ClipLoader
+                  color={"white"}
+                  loading={spinner}
+                  size={15}
+                  aria-label="Loading Spinner"
+                  data-testid="loader"
+                />
               </button>
               <h1 className="mt-3">
                 Already Registered

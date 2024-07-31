@@ -4,6 +4,20 @@ import { db } from "../../auth/firebase";
 import Table from "../data-table/Table";
 import { collectionGroup, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { ToastContainer, toast } from "react-toastify";
+import { auth } from "../../auth/firebase.ts";
+import { User, onAuthStateChanged } from "firebase/auth";
+import {
+  collection,
+  query,
+  where,
+  setDoc,
+  limit,
+  startAt,
+  endAt,
+  addDoc,
+  updateDoc,
+  doc as firestoreDoc,
+} from "firebase/firestore";
 
 type GetData = () => void;
 
@@ -34,31 +48,41 @@ const Dashboard: FC<inputProps> = ({
   const [pendingTasks, setPendingTasks] = useState(0);
   const [completedTasks, setCompletedTasks] = useState(0);
   const [loading, setLoading] = useState(true); // Loading state
+  const [currentUser, setCurrentUser] = useState<User | null>();
 
   const getData = async () => {
     setLoading(true); // Start loading
     try {
-      const querySnapshot = await getDocs(collectionGroup(db, "tasks"));
+      if (currentUser) {
+        const tasksCollectionRef = collection(
+          db,
+          "tasks",
+          currentUser.uid,
+          "userTasks"
+        );
 
-      if (querySnapshot.empty) {
-        setAllTasksData([]);
-        setTotalTasks(0);
-        setPendingTasks(0);
-        setCompletedTasks(0);
-      } else {
-        const tasks = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as DataRow[];
+        const querySnapshot = await getDocs(tasksCollectionRef);
+        if (querySnapshot.empty) {
+          setAllTasksData([]);
+          setTotalTasks(0);
+          setPendingTasks(0);
+          setCompletedTasks(0);
+        } else {
+          const tasks = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as DataRow[];
 
-        setAllTasksData(tasks);
-        setTotalTasks(tasks.length);
+          setAllTasksData(tasks);
 
-        const pending = tasks.filter((task) => task.status === "open");
-        setPendingTasks(pending.length);
+          setTotalTasks(tasks.length);
 
-        const closed = tasks.filter((task) => task.status === "closed");
-        setCompletedTasks(closed.length);
+          const pending = tasks.filter((task) => task.status === "open");
+          setPendingTasks(pending.length);
+
+          const closed = tasks.filter((task) => task.status === "closed");
+          setCompletedTasks(closed.length);
+        }
       }
     } catch (error) {
       console.error("Error fetching data: ", error);
@@ -68,9 +92,15 @@ const Dashboard: FC<inputProps> = ({
   };
 
   useEffect(() => {
-    getData();
-    updateTable(getData);
-  }, []);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUser(user);
+        getData();
+        updateTable(getData);
+      }
+    });
+    return () => unsubscribe();
+  }, [currentUser]);
 
   const handleEdit = (row: DataRow) => {
     openCreateTask(row);
@@ -80,11 +110,15 @@ const Dashboard: FC<inputProps> = ({
 
   const handleDelete = async (row: DataRow) => {
     try {
-      await deleteDoc(doc(db, "tasks", row.id));
-      toast.success("Task Delete Successful", {
-        position: "top-right",
-      });
-      getData();
+      if (currentUser) {
+        await deleteDoc(doc(db, "tasks", currentUser.uid, "userTasks", row.id));
+        toast.success("Task Delete Successful", {
+          position: "top-right",
+        });
+        getData();
+      } else {
+        console.error("User is not authenticated");
+      }
     } catch (error) {
       console.error("Error removing document: ", error);
     }

@@ -20,6 +20,7 @@ import {
   startAt,
   doc,
   endAt,
+  addDoc,
   updateDoc,
   doc as firestoreDoc,
 } from "firebase/firestore";
@@ -191,20 +192,23 @@ const CreateTask: FC<inputProps> = ({
     setSpinner(true);
     event.preventDefault();
     if (data && user) {
-      const taskRef = firestoreDoc(db, "tasks", data.id);
+      const taskRef = firestoreDoc(db, "tasks", user.uid, "userTasks", data.id);
       await updateDoc(taskRef, form);
+
       setSpinner(false);
       toast.success("Task updated successfully!");
+      console.log(tableUpdate);
 
       if (tableUpdate) {
+        console.log("table update called");
         tableUpdate();
       }
 
       closeCreateTask();
     } else {
       if (user) {
-        const taskRef = doc(collection(db, "tasks"));
-        await setDoc(taskRef, form);
+        const taskRef = collection(db, "tasks", user.uid, "userTasks");
+        await addDoc(taskRef, form);
         setForm(initialValues);
         setValue("");
         setSpinner(false);
