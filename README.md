@@ -1,3 +1,36 @@
+#Task Management App
+# live Demo
+https://project-management-react-a7ee1.web.app/
+
+#overview
+A task management app which allow user to assign tasks along with task description and deadline.
+
+#installation
+-clone repository
+-run npm install
+-npm run dev
+-follow local host link
+
+# important detail
+i have removed api key and authentication key so this might not work as expected
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
