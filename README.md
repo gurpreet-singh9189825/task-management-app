@@ -1,8 +1,10 @@
 # task management app
 
-# live Demo https://project-management-react-a7ee1.web.app/
+# live Demo 
+https://project-management-react-a7ee1.web.app/
 
-# Allow user to add and assign tasks to user along with deadline and task details.
+# Overview
+Allow user to add and assign tasks to user along with deadline and task details.
 
 # Installation
 - clone repository
